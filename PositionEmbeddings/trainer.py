@@ -11,8 +11,9 @@ from sklearn.model_selection import train_test_split
 
 from transformers import TrOCRProcessor, VisionEncoderDecoderModel
 
+root_directory = "/home/jesse/TrOCR/"
 def get_iam_df():
-    df = pd.read_fwf('/home/jesse/trocr/IAM/gt_test.txt', header=None)
+    df = pd.read_fwf(root_directory + 'IAM/gt_test.txt', header=None)
     df.rename(columns={0: "file_name", 1: "text"}, inplace=True)
     del df[2]
     # some file names end with jp instead of jpg, let's fix this
@@ -30,10 +31,10 @@ def get_train_test_dfs():
 
 def get_train_test_dataloaders(processor : HeightTrOCRProcessor):
     train_df, test_df = get_train_test_dfs()
-    train_dataset = IAMDataset(root_dir='/home/jesse/trocr/IAM/image/',
+    train_dataset = IAMDataset(root_dir=root_directory + 'IAM/image/',
                            df=train_df,
                            processor=processor)
-    eval_dataset = IAMDataset(root_dir='/home/jesse/trocr/IAM/image/',
+    eval_dataset = IAMDataset(root_dir=root_directory + 'IAM/image/',
                             df=test_df,
                             processor=processor)
     
@@ -122,6 +123,6 @@ def train():
             
 
 
-        model.save_pretrained("/home/jesse/scratch/PositionEmbeddings")
+        model.save_pretrained(root_directory + "SaveDirectory")
 
 train()

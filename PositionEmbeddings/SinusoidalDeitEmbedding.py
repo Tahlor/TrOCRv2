@@ -113,8 +113,8 @@ def run_double_height():
     processor = HeightTrOCRProcessor.from_pretrained('microsoft/trocr-small-handwritten', height=img_height, width=384)
     config = SinusoidalVisionEncoderDecoderConfig.from_pretrained('microsoft/trocr-small-handwritten', enc_lpe=True, dec_lpe=True, image_height=img_height, image_width=384, max_length=50)
     model = SinusoidalVisionEncoderDecoder.from_pretrained('microsoft/trocr-small-handwritten', config=config, ignore_mismatched_sizes=True)
-    image1 = Image.open("/home/jesse/trocr/IAM/AllImages/a01-000u-00.jpg").convert("RGB")
-    image2 = Image.open("/home/jesse/trocr/IAM/AllImages/a01-000u-01.jpg").convert("RGB")
+    image1 = Image.open("/home/jesse/TrOCR/IAM/AllImages/a01-000u-00.jpg").convert("RGB")
+    image2 = Image.open("/home/jesse/TrOCR/IAM/AllImages/a01-000u-01.jpg").convert("RGB")
     doubled_height_image = double_image_height(image1, image2)
     pixel_values = processor(doubled_height_image, return_tensors="pt").pixel_values
     generated_ids = model.generate(pixel_values)
@@ -127,8 +127,8 @@ def test_processor():
     processor = HeightTrOCRProcessor.from_pretrained('microsoft/trocr-small-handwritten', height=img_height, width=384)
     config = SinusoidalVisionEncoderDecoderConfig.from_pretrained('microsoft/trocr-small-handwritten', enc_lpe=True, dec_lpe=True, image_height=384, image_width=384, max_length=50)
     model = SinusoidalVisionEncoderDecoder.from_pretrained('microsoft/trocr-small-handwritten', config=config, ignore_mismatched_sizes=False)
-    image1 = Image.open("/home/jesse/trocr/IAM/AllImages/a01-000u-00.jpg").convert("RGB")
-    image2 = Image.open("/home/jesse/trocr/IAM/AllImages/a01-000u-01.jpg").convert("RGB")
+    image1 = Image.open("/home/jesse/TrOCR/IAM/AllImages/a01-000u-00.jpg").convert("RGB")
+    image2 = Image.open("/home/jesse/TrOCR/IAM/AllImages/a01-000u-01.jpg").convert("RGB")
     doubled_height_image = double_image_height(image1, image2)
     pixel_values = processor(doubled_height_image, return_tensors="pt").pixel_values
     first_phrase, second_phrase = torch.split(pixel_values, 384, 2)
