@@ -61,6 +61,7 @@ def train():
     optimizer = AdamW(model.parameters(), lr=5e-5 / (2048 / batch_size) / 2)
     scheduler = get_constant_schedule_with_warmup(optimizer, 15000)
     model.cuda()
+    losses = []
     for epoch in range(50):  # loop over the dataset multiple times
 
         # evaluate
@@ -97,9 +98,11 @@ def train():
             scheduler.step()
 
         print(f"Loss after epoch {epoch}:", train_loss/len(train_dataloader))
+        losses.append(train_loss)
             
 
 
         model.save_pretrained(root_directory + "SaveDirectory")
+    print(losses)
 
 train()
