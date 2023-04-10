@@ -18,6 +18,7 @@ def compute_cer(pred_ids, label_ids, cer_metric, processor, start):
 
 root_directory = "/home/jesse/TrOCR/"
 batch_size = 18
+num_workers = 12
 def new_iam_df(label_directory=root_directory + '/IAM/train_labels.txt'):
     rows = []
     with open(label_directory, 'r') as label_file:
@@ -44,8 +45,8 @@ def get_train_test_dataloaders(processor):
                             df=test_df,
                             processor=processor)
     
-    train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-    eval_dataloader = DataLoader(eval_dataset, batch_size=batch_size)
+    train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers)
+    eval_dataloader = DataLoader(eval_dataset, batch_size=batch_size, num_workers=num_workers)
 
     return train_dataloader, eval_dataloader
 
