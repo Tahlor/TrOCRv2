@@ -12,6 +12,8 @@ from sklearn.model_selection import train_test_split
 from transformers import TrOCRProcessor, VisionEncoderDecoderModel
 
 root_directory = "/home/jesse/TrOCR/"
+batch_size = 18
+num_workers = 12
 def get_iam_df():
     df = pd.read_fwf(root_directory + 'IAM/gt_test.txt', header=None)
     df.rename(columns={0: "file_name", 1: "text"}, inplace=True)
@@ -38,24 +40,21 @@ def get_train_test_dataloaders(processor : HeightTrOCRProcessor):
                             df=test_df,
                             processor=processor)
     
-    train_dataloader = DataLoader(train_dataset, batch_size=7, shuffle=True)
-    eval_dataloader = DataLoader(eval_dataset, batch_size=7)
+    train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers)
+    eval_dataloader = DataLoader(eval_dataset, batch_size=batch_size, num_workers=num_workers)
 
     return train_dataloader, eval_dataloader
 
 def set_tokens(model : SinusoidalVisionEncoderDecoder, processor : HeightTrOCRProcessor):
-    # model.config.eos_token_id = processor.tokenizer.sep_token_id
-    # model.config.decoder_start_token_id = 2 # some tutorials use processor.tokenizer.cls_token_id here
-    # model.config.pad_token_id = processor.tokenizer.pad_token_id
     model.config.pad_token_id = processor.tokenizer.pad_token_id
     model.config.eos_token_id = processor.tokenizer.eos_token_id
-    model.config.decoder_start_token_id = 2 #processor.tokenizer.cls_token_id
+    model.config.decoder_start_token_id = 2
     model.config.sep_token_id = processor.tokenizer.sep_token_id
-    # model.config.max_length = 64
-    # model.config.early_stopping = True
-    # model.config.no_repeat_ngram_size = 3
-    # model.config.length_penalty = 2.0
-    # model.config.num_beams = 4
+    model.config.max_length = 64
+    model.config.early_stopping = True
+    model.config.no_repeat_ngram_size = 3
+    model.config.length_penalty = 2.0
+    model.config.num_beams = 4
 
 def compute_cer(pred_ids, label_ids, cer_metric, processor, start):
     pred_str = processor.batch_decode(pred_ids, skip_special_tokens=True)
