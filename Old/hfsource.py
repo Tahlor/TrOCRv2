@@ -304,8 +304,8 @@ def train():
                                 df=test_df,
                                 processor=processor)
 
-        train_dataloader = DataLoader(train_dataset, batch_size=12)#, shuffle=True)
-        eval_dataloader = DataLoader(eval_dataset, batch_size=12)
+        train_dataloader = DataLoader(train_dataset, batch_size=12, shuffle=True, num_workers=12)
+        eval_dataloader = DataLoader(eval_dataset, batch_size=12, num_workers=12)
 
         trainingloop = TrainingLoop(model=model, processor=processor, optimizer=optimizer,
                                     device=device, lr=lr, scheduler=scheduler, num_epochs=5000)
