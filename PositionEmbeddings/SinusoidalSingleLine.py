@@ -83,6 +83,19 @@ def train():
 
         print("Validation CER:", valid_cer / len(eval_dataloader))
 
+        if epoch % 5 == 0:
+            train_cer = 0.0
+            start = 0
+            with torch.no_grad():
+                for batch in tqdm(train_dataloader):
+                    # run batch generation
+                    outputs = model.generate(batch["pixel_values"].to("cuda:0"))
+                    # compute metrics
+                    cer = compute_cer(outputs, batch["labels"], cer_metric, processor, start)
+                    start += 1
+                    train_cer += cer 
+            print("Train:", train_cer / len(train_dataloader))
+
         # train
         model.train()
         train_loss = 0.0
