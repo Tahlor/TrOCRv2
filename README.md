@@ -11,3 +11,6 @@ The test folder holds the results and code for running various tests on the supe
 
 The TestHelpers folder holds the main boilerplate code for training and evaluating the models with various parameters that can be used as flags to change what is
 printed out and how the model is changed.
+
+Most of the dependencies should be in the environment.yaml folder, although there were a few packages that conda didn't have, so pip was used. As a result, there is
+a requirements.txt file too.
