@@ -1,5 +1,5 @@
-from PositionEmbeddings.IAMDataset import IAMDataset
-from PositionEmbeddings.IAMDatasetTwoLines import IAMDatasetTwoLines
+from src.PositionEmbeddings.IAMDataset import IAMDataset
+from src.PositionEmbeddings.IAMDatasetTwoLines import IAMDatasetTwoLines
 from torch.utils.data import DataLoader
 import pandas as pd
 

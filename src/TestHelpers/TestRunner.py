@@ -3,7 +3,7 @@ from datasets import load_metric
 import torch
 from tqdm import tqdm
 
-from DataloaderHelper import get_train_eval_test_dataloaders
+from src.TestHelpers.DataloaderHelper import get_train_eval_test_dataloaders
 
 cer_metric = load_metric('cer')
 
