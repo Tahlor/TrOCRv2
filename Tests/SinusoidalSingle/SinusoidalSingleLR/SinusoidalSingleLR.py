@@ -15,7 +15,7 @@ def main():
     model.config.decoder_start_token_id = 2
     model.config.pad_token_id = processor.tokenizer.pad_token_id
 
-    lr = 5e-5 / (2048 / batch_size) / 2
+    lr = 5e-5 / (2048 / batch_size)
 
     run(processor, model, batch_size, num_workers, image_directory, 50, lr, save_directory)
 
