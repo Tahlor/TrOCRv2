@@ -2,3 +2,4 @@ config.json
 generation_config.json
 __pycache__
 *.bin
+*.tar.gz
