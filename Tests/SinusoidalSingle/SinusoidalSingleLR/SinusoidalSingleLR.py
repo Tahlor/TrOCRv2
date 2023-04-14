@@ -1,14 +1,15 @@
-from src.TestHelpers.TestRunner import run
-from src.PositionEmbeddings.SinusoidalDeitEmbedding import SinusoidalVisionEncoderDecoder, SinusoidalVisionEncoderDecoderConfig
-from transformers import TrOCRProcessor
-import sys
-
 def main():
-    sys.path.append('/home/jclar234/TrOCR/src')
+    import sys
     num_workers = sys.argv[1]
     batch_size = sys.argv[2]
     image_directory = sys.argv[3]
     save_directory = sys.argv[4]
+    root_directory = sys.argv[5]
+    sys.path.append(root_directory)
+
+    from src.TestHelpers.TestRunner import run
+    from src.PositionEmbeddings.SinusoidalDeitEmbedding import SinusoidalVisionEncoderDecoder, SinusoidalVisionEncoderDecoderConfig
+    from transformers import TrOCRProcessor
 
     processor = TrOCRProcessor.from_pretrained('microsoft/trocr-small-handwritten')
     config = SinusoidalVisionEncoderDecoderConfig.from_pretrained('microsoft/trocr-small-handwritten', enc_lpe=False, dec_lpe=False, image_height=384, image_width=384, max_length=50)
