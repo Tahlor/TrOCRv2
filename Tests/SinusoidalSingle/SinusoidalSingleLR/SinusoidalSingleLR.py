@@ -4,6 +4,7 @@ from transformers import TrOCRProcessor
 import sys
 
 def main():
+    sys.path.append('/home/jclar234/TrOCR/src')
     num_workers = sys.argv[1]
     batch_size = sys.argv[2]
     image_directory = sys.argv[3]
