@@ -1,4 +1,4 @@
-from TestHelpers.TestRunner import run
+from src.TestHelpers.TestRunner import run
 from src.PositionEmbeddings.SinusoidalDeitEmbedding import SinusoidalVisionEncoderDecoder, SinusoidalVisionEncoderDecoderConfig
 from transformers import TrOCRProcessor
 import sys

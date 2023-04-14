@@ -1,4 +1,4 @@
-from TestHelpers.TestRunner import run
+from src.TestHelpers.TestRunner import run
 from transformers import TrOCRProcessor, VisionEncoderDecoderModel
 import sys
 
