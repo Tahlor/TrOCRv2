@@ -13,8 +13,11 @@ def _compute_cer(pred_ids, label_ids, processor, start, print_num_samples):
     label_str = processor.batch_decode(label_ids, skip_special_tokens=True)
     cer = cer_metric.compute(predictions=pred_str, references=label_str)
     if start < print_num_samples:
-        print(pred_str)
-        print(label_str)
+        try:
+            print(pred_str)
+            print(label_str)
+        except:
+            pass
     return cer
 
 def _evaluate_cer(model, dataloader, processor, cer_type, print_num_samples):
@@ -50,11 +53,11 @@ def enable_gradients(epoch, model):
 
 def run(processor, 
           model, 
-          batch_size,
-          num_workers,
-          image_directory,
-          num_epochs, 
           lr,
+          batch_size=23,
+          num_workers=9,
+          root_directory='home/jclar234/TrOCR',
+          num_epochs=50, 
           save_directory = None,
           save_every = 5,
           print_train_cer_every = 5,
@@ -63,12 +66,14 @@ def run(processor,
           print_num_samples = 1,
           train = True,
           unfreeze = False,
-          use_double = False):
+          use_double = False,
+          num_images = None,
+          warmup = True):
     
-    train_dataloader, eval_dataloader, _ = get_train_eval_test_dataloaders(processor, image_directory, batch_size, num_workers, use_double)
+    train_dataloader, eval_dataloader, _ = get_train_eval_test_dataloaders(processor, root_directory, batch_size, num_workers, use_double, num_images)
     
     optimizer = AdamW(model.parameters(), lr=lr)
-    scheduler = get_constant_schedule_with_warmup(optimizer, 15000)
+    scheduler = get_constant_schedule_with_warmup(optimizer, 15000) if warmup else None
     model.cuda()
     losses = []
     for epoch in range(num_epochs):  # loop over the dataset multiple times
@@ -99,7 +104,8 @@ def run(processor,
                 optimizer.zero_grad()
 
                 train_loss += loss.item()
-                scheduler.step()
+                if warmup:
+                    scheduler.step()
 
             if epoch % print_loss_every == 0:
                 print(f"Loss after epoch {epoch}:", train_loss/len(train_dataloader))

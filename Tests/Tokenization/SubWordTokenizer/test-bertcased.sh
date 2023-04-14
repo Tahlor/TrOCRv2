@@ -3,7 +3,7 @@
 #SBATCH --mem-per-cpu 8000MB
 #SBATCH --ntasks 9
 #SBATCH --nodes=1
-#SBATCH --output="canine-tokenizer.slurm"
+#SBATCH --output="bert-tokenizer.slurm"
 #SBATCH --time 03:00:00
 #SBATCH --mail-user=jesseclarkwins@gmail.com   # email address
 #SBATCH --mail-type=BEGIN
@@ -15,4 +15,4 @@
 module purge
 
 export PATH="/home/jclar234/.conda/envs/trocr3/bin:$PATH"
-python CanineTokenizer.py 9 23 "/home/jclar234/TrOCR/" "/home/jclar234/TrOCR/Tests/CharacterTokenizer/Results/Model/sub-models" "/home/jclar234/TrOCR"
+python BertCased.py 9 23 "/home/jclar234/TrOCR/" "/home/jclar234/TrOCR/Tests/Tokenization/SubWordTokenizer/Results/Model/sub-models" "/home/jclar234/TrOCR"

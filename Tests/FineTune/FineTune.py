@@ -5,7 +5,7 @@ import sys
 def main():
     num_workers = sys.argv[1]
     batch_size = sys.argv[2]
-    image_directory = sys.argv[3]
+    root_directory = sys.argv[3]
     save_directory = sys.argv[4]
 
     processor = TrOCRProcessor.from_pretrained('microsoft/trocr-small-stage1')
@@ -15,6 +15,6 @@ def main():
 
     lr = 5e-5 / (2048 / batch_size)
 
-    run(processor, model, batch_size, num_workers, image_directory, 50, lr, save_directory)
+    run(processor, model, lr, batch_size, num_workers, root_directory=root_directory, save_directory=save_directory)
 
 main()

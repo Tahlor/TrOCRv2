@@ -4,16 +4,20 @@ import torch
 
 
 class IAMDatasetTwoLines(Dataset):
-    def __init__(self, root_dir, df, processor, max_target_length=128):
+    def __init__(self, root_dir, df, processor, max_target_length=128, num_images=None):
         self.root_dir = root_dir
         self.df = df
         # (TrOCRProcesser - from base handwritten pretrained)
         self.processor = processor
         self.max_target_length = max_target_length
+        self.num_images = num_images
 
     def __len__(self):
         # // 2 is for concatenating item with item+1
-        return len(self.df) // 2 - 1
+        if self.num_images != None:
+            return self.num_images
+        else:
+            return len(self.df) // 2 - 1
 
     def concat_v_blank(self, im1, im2, color=(256, 256, 256)):
         dst = Image.new('RGB', (max(im1.width, im2.width),

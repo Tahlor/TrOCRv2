@@ -3,14 +3,18 @@ from torch.utils.data import Dataset
 from PIL import Image
 
 class IAMDataset(Dataset):
-    def __init__(self, root_dir, df, processor, max_target_length=128):
+    def __init__(self, root_dir, df, processor, max_target_length=128, num_images=None):
         self.root_dir = root_dir
         self.df = df
         self.processor = processor
         self.max_target_length = max_target_length
+        self.num_images = num_images
 
     def __len__(self):
-        return len(self.df)
+        if self.num_images != None:
+            return self.num_images
+        else:
+            return len(self.df)
 
     def __getitem__(self, idx):
         # get file name + text 
