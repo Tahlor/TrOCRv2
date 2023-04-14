@@ -11,7 +11,7 @@ def main():
 
     processor = TrOCRProcessor.from_pretrained('microsoft/trocr-small-handwritten')
     config = SinusoidalVisionEncoderDecoderConfig.from_pretrained('microsoft/trocr-small-handwritten', enc_lpe=False, dec_lpe=False, image_height=384, image_width=384, max_length=50)
-    model = SinusoidalVisionEncoderDecoder.from_pretrained('microsoft/trocr-small-handwritten', config=config, ignore_mismatched_sizes=False)
+    model = SinusoidalVisionEncoderDecoder.from_pretrained('/home/jclar234/TrOCR/Tests/SinusoidalSingle/SinusoidalSingleLine/Results/SinusoidalSingle45', config=config, ignore_mismatched_sizes=False)
     model.config.decoder_start_token_id = 2
     model.config.pad_token_id = processor.tokenizer.pad_token_id
 
