@@ -15,4 +15,4 @@
 module purge
 
 export PATH="/home/jclar234/.conda/envs/trocr3/bin:$PATH"
-python SinusoidalSingleLR.py 9 23 "/home/jclar234/TrOCR/" "/home/jclar234/TrOCR/Tests/SinusoidalSingle/SinusoidalSingleLR/Results/Model/sub-models"
+python SinusoidalSingleLR.py 9 23 "/home/jclar234/TrOCR/" "/home/jclar234/TrOCR/Tests/SinusoidalSingle/SinusoidalSingleLR/Results/Model/sub-models" "/home/jclar234/TrOCR"
