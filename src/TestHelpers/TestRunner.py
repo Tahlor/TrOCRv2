@@ -63,11 +63,6 @@ def disable_grad(model):
 def get_model_and_processor(config : TestConfiguration):
     processor = HeightTrOCRProcessor.from_pretrained(config.processor_pretrained_path, height=config.image_height, width=config.image_width)
 
-    if config.tokenizer_type == "CANINE":
-        processor.tokenizer = CanineTokenizer.from_pretrained('google/canine-c')
-    elif config.tokenizer_type == "BERT":
-        processor.tokenizer = BertTokenizer.from_pretrained('bert-base-cased')
-
     model_config = SinusoidalVisionEncoderDecoderConfig.from_pretrained(config.model_pretrained_path, 
                                                                         enc_lpe=config.use_learned_position_embeddings, 
                                                                         dec_lpe=config.use_learned_position_embeddings, 
@@ -76,6 +71,17 @@ def get_model_and_processor(config : TestConfiguration):
                                                                         max_length=config.max_tokens)
     
     model = SinusoidalVisionEncoderDecoder.from_pretrained(config.model_pretrained_path, config=model_config, ignore_mismatched_sizes=True)
+    
+    if config.tokenizer_type == "CANINE":
+        processor.tokenizer = CanineTokenizer.from_pretrained('google/canine-c')
+        model.config.decoder_start_token_id = processor.tokenizer.cls_token_id
+    elif config.tokenizer_type == "BERT":
+        processor.tokenizer = BertTokenizer.from_pretrained('bert-base-cased')
+        model.config.decoder_start_token_id = processor.tokenizer.cls_token_id
+    else:
+        model.config.decoder_start_token_id = 2
+
+    model.config.pad_token_id = processor.tokenizer.pad_token_id
     
     if config.train_only_embeddings:
         disable_grad(model)
