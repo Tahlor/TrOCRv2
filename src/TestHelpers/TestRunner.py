@@ -3,7 +3,11 @@ from datasets import load_metric
 import torch
 from tqdm import tqdm
 
+from transformers import CanineTokenizer, BertTokenizer
+
 from src.TestHelpers.DataloaderHelper import get_train_eval_test_dataloaders
+from src.TestHelpers.TestConfiguration import TestConfiguration
+from src.PositionEmbeddings.SinusoidalDeitEmbedding import HeightTrOCRProcessor, SinusoidalVisionEncoderDecoder, SinusoidalVisionEncoderDecoderConfig
 
 cer_metric = load_metric('cer')
 
@@ -51,43 +55,60 @@ def enable_gradients(epoch, model):
         if not 'bias' in name:
             i += 1
 
-def run(processor, 
-          model, 
-          lr,
-          batch_size=23,
-          num_workers=9,
-          root_directory='home/jclar234/TrOCR',
-          num_epochs=50, 
-          save_directory = None,
-          save_every = 5,
-          print_train_cer_every = 5,
-          print_eval_cer_every = 5,
-          print_loss_every = 1,
-          print_num_samples = 1,
-          train = True,
-          unfreeze = False,
-          use_double = False,
-          num_images = None,
-          warmup = True):
+def disable_grad(model):
+    for name, param in model.named_parameters():
+        if name != "encoder.embeddings.position_embeddings" and name != "decoder.model.decoder.embed_positions.weight":
+            param.requires_grad = False
+
+def get_model_and_processor(config : TestConfiguration):
+    processor = HeightTrOCRProcessor.from_pretrained(config.processor_pretrained_path, height=config.image_height, width=config.image_width)
+
+    if config.tokenizer_type == "CANINE":
+        processor.tokenizer = CanineTokenizer.from_pretrained('google/canine-c')
+    elif config.tokenizer_type == "BERT":
+        processor.tokenizer = BertTokenizer.from_pretrained('bert-base-cased')
+
+    model_config = SinusoidalVisionEncoderDecoderConfig.from_pretrained(config.model_pretrained_path, 
+                                                                        enc_lpe=config.use_learned_position_embeddings, 
+                                                                        dec_lpe=config.use_learned_position_embeddings, 
+                                                                        image_height=config.image_height, 
+                                                                        image_width=config.image_width, 
+                                                                        max_length=config.max_tokens)
     
-    train_dataloader, eval_dataloader, _ = get_train_eval_test_dataloaders(processor, root_directory, batch_size, num_workers, use_double, num_images)
+    model = SinusoidalVisionEncoderDecoder.from_pretrained(config.model_pretrained_path, config=model_config, ignore_mismatched_sizes=True)
     
-    optimizer = AdamW(model.parameters(), lr=lr)
-    scheduler = get_constant_schedule_with_warmup(optimizer, 15000) if warmup else None
+    if config.train_only_embeddings:
+        disable_grad(model)
+        
+    return processor, model
+
+def run(config : TestConfiguration):
+    processor, model = get_model_and_processor(config)
+
+
+    train_dataloader, eval_dataloader, _ = get_train_eval_test_dataloaders(processor, 
+                                                                           config.root_directory, 
+                                                                           config.batch_size, 
+                                                                           config.num_workers, 
+                                                                           config.use_double, 
+                                                                           config.num_images)
+    
+    optimizer = AdamW(model.parameters(), lr=config.lr)
+    scheduler = get_constant_schedule_with_warmup(optimizer, 500) if config.constant_warmup else None
     model.cuda()
     losses = []
-    for epoch in range(num_epochs):  # loop over the dataset multiple times
+    for epoch in range(config.num_epochs):  # loop over the dataset multiple times
 
-        if print_eval_cer_every != None and epoch % print_eval_cer_every == 0:
-            _evaluate_cer(model, eval_dataloader, processor, "VALIDATION", print_num_samples)
+        if config.print_eval_cer_every != None and epoch % config.print_eval_cer_every == 0:
+            _evaluate_cer(model, eval_dataloader, processor, "VALIDATION", config.print_num_samples)
 
-        if print_train_cer_every != None and epoch % print_train_cer_every == 0:
-            _evaluate_cer(model, train_dataloader, processor, "TRAIN", print_num_samples)
+        if config.print_train_cer_every != None and epoch % config.print_train_cer_every == 0:
+            _evaluate_cer(model, train_dataloader, processor, "TRAIN", config.print_num_samples)
 
-        if unfreeze:
+        if config.unfreeze:
             enable_gradients(epoch, model)
         
-        if train:
+        if config.train:
             # train
             model.train()
             train_loss = 0.0
@@ -104,16 +125,16 @@ def run(processor,
                 optimizer.zero_grad()
 
                 train_loss += loss.item()
-                if warmup:
+                if config.constant_warmup:
                     scheduler.step()
 
-            if epoch % print_loss_every == 0:
+            if epoch % config.print_loss_every == 0:
                 print(f"Loss after epoch {epoch}:", train_loss/len(train_dataloader))
 
             losses.append(train_loss / len(train_dataloader))
             
-        if save_directory != None and epoch % save_every == 0:
-            model.save_pretrained(save_directory + str(epoch))
+        if config.save_directory != None and epoch % config.save_every == 0:
+            model.save_pretrained(config.save_directory + str(epoch))
 
-    if train:
+    if config.train:
         print(losses)

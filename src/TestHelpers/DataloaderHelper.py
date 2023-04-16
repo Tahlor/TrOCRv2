@@ -22,6 +22,7 @@ def _get_new_train_eval_test_dfs(root_directory):
     return train_df, eval_df, test_df
 
 def get_train_eval_test_dataloaders(processor, root_directory, batch_size, num_workers, use_double, num_images):
+    root_directory += '/'
     train_df, eval_df, test_df = _get_new_train_eval_test_dfs(root_directory)
 
     train_dataset = None

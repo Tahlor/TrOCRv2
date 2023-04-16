@@ -3,7 +3,7 @@
 #SBATCH --mem-per-cpu 8000MB
 #SBATCH --ntasks 9
 #SBATCH --nodes=1
-#SBATCH --output="canine-tokenizer.slurm"
+#SBATCH --output="learned-embeddings.slurm"
 #SBATCH --time 03:00:00
 #SBATCH --mail-user=jesseclarkwins@gmail.com   # email address
 #SBATCH --mail-type=BEGIN
@@ -12,7 +12,7 @@
 #SBATCH -C 'rhel7&pascal'
 
 #%Module
-module purge
+# module purge
 
 export PATH="/home/jclar234/.conda/envs/trocr3/bin:$PATH"
-python CanineTokenizer.py 9 23 "/home/jclar234/TrOCR/" "/home/jclar234/TrOCR/Tests/Tokenization/CharacterTokenizer/Results/Model/sub-models" "/home/jclar234/TrOCR"
+python RunConfig.py "$config_yaml"
