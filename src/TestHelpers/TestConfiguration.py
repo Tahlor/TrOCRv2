@@ -17,7 +17,8 @@ class TestConfiguration:
         self.unfreeze = False
         self.use_double = False
         self.num_images = None
-        self.constant_warmup = True
+        self.constant_warmup = False
+        self.linear_schedule_with_warmup = False
         self.processor_pretrained_path = 'microsoft/trocr-small-handwritten'
         self.model_pretrained_path = 'microsoft/trocr-small-handwritten'
         self.image_height = 384

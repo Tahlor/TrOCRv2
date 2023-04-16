@@ -1,5 +1,6 @@
 batch_size: 23
 constant_warmup: false
+linear_schedule_with_warmup: true
 image_height: 384
 image_width: 384
 lr: 0.00005
@@ -14,7 +15,7 @@ print_num_samples: 1
 print_train_cer_every: 5
 processor_pretrained_path: microsoft/trocr-small-handwritten
 root_directory: /home/jesse/TrOCR
-save_directory: /home/jesse/TrOCR/Tests/Tokenization/CharacterTokenizer/Results/Model/SubModel
+save_directory: /home/jesse/TrOCR/Tests/Tokenization/56335922/Results/Model/SubModel
 save_every: 5
 tokenizer_type: BERT
 train: true

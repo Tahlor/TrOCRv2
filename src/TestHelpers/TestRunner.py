@@ -1,4 +1,4 @@
-from transformers import AdamW, get_constant_schedule_with_warmup
+from transformers import AdamW, get_constant_schedule_with_warmup, get_linear_schedule_with_warmup
 from datasets import load_metric
 import torch
 from tqdm import tqdm
@@ -94,7 +94,11 @@ def run(config : TestConfiguration):
                                                                            config.num_images)
     
     optimizer = AdamW(model.parameters(), lr=config.lr)
-    scheduler = get_constant_schedule_with_warmup(optimizer, 500) if config.constant_warmup else None
+    scheduler = None
+    if config.linear_schedule_with_warmup:
+        scheduler = get_linear_schedule_with_warmup(optimizer, 10, config.num_epochs - 10)
+    elif config.constant_warmup:
+        scheduler = get_constant_schedule_with_warmup(optimizer, 10)
     model.cuda()
     losses = []
     for epoch in range(config.num_epochs):  # loop over the dataset multiple times
@@ -125,8 +129,8 @@ def run(config : TestConfiguration):
                 optimizer.zero_grad()
 
                 train_loss += loss.item()
-                if config.constant_warmup:
-                    scheduler.step()
+            if config.constant_warmup or config.linear_schedule_with_warmup:
+                scheduler.step()
 
             if epoch % config.print_loss_every == 0:
                 print(f"Loss after epoch {epoch}:", train_loss/len(train_dataloader))
