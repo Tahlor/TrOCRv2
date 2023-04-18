@@ -13,6 +13,7 @@ a requirements.txt file too.
 The sync scripts can be used to transfer models from the repository on the supercomputer to your local machine and vice versa. Git can't hold the larger model files, so these scripts can help you maintain the repository in sync. These scripts will completely change the syncing to repository to the syncing from repository, so use them carefully.
 
 # Test Results
+To run tests you type ./RunSupercomputerTest.sh followed by the config file path/name like this: ./RunSupercomputerTest.sh FineTune/FineTuneConfig.yml
 This is where I ended at:
 
 I wasn't able to avoid the loss spike when using the microsoft/handwritten-small model and training on the IAM images.
