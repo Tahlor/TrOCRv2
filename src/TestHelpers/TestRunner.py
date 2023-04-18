@@ -15,14 +15,15 @@ def _compute_cer(pred_ids, label_ids, processor, start, print_num_samples):
     pred_str = processor.batch_decode(pred_ids, skip_special_tokens=True)
     label_ids[label_ids == -100] = processor.tokenizer.pad_token_id
     label_str = processor.batch_decode(label_ids, skip_special_tokens=True)
-    cer = cer_metric.compute(predictions=pred_str, references=label_str)
-    if start < print_num_samples:
-        try:
+    try:
+        cer = cer_metric.compute(predictions=pred_str, references=label_str)
+        if start < print_num_samples:
             print(pred_str)
             print(label_str)
-        except:
-            pass
-    return cer
+        return cer
+    except:
+        print("Bad output, can't compare or print. Returning CER 1")
+        return 1
 
 def _evaluate_cer(model, dataloader, processor, cer_type, print_num_samples):
     model.eval()
