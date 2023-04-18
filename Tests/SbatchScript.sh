@@ -3,7 +3,7 @@
 #SBATCH --mem-per-cpu 8000MB
 #SBATCH --ntasks 9
 #SBATCH --nodes=1
-#SBATCH --output="learned-embeddings.slurm"
+#SBATCH --output="UnfreezeSinusoidal.slurm"
 #SBATCH --time 03:00:00
 #SBATCH --mail-user=jesseclarkwins@gmail.com   # email address
 #SBATCH --mail-type=BEGIN
